@@ -38,7 +38,6 @@ void ImportDialog::onItemSelectionChanged(QTreeWidgetItem* itm,int col)
     mScene.setSceneRect(0,0,mImg->width(), mImg->height());
     mScene.clear();
     mScene.addItem(mPixmap);
-   // ui->graphicsView_preview->setScene(&mScene);
 }
 
 void ImportDialog::fillTree(QList<QUrl> urls)
@@ -73,7 +72,7 @@ ImportDialog::TmpObj ImportDialog::createTmpObj(QUrl url)
     TmpObj tmp;
     tmp.ID = QUuid::createUuid().toString();
     tmp.name = url.fileName();
-    tmp.path = url.path();
+    tmp.path = QDir::toNativeSeparators(url.toLocalFile());
     tmp.contours = mImgProc.findContours(url.path());
 
     return tmp;

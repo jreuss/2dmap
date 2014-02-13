@@ -15,6 +15,7 @@
 #include <opencv2/core/core.hpp>
 #include <QGraphicsPixmapItem>
 #include <QBrush>
+#include <QDir>
 
 #include "imgproc.h"
 
