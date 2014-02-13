@@ -50,16 +50,29 @@
       <property name="sizeAdjustPolicy">
        <enum>QAbstractScrollArea::AdjustToContents</enum>
       </property>
+      <property name="alternatingRowColors">
+       <bool>true</bool>
+      </property>
       <column>
        <property name="text">
-        <string notr="true">1</string>
+        <string>Name</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Type</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string notr="true">ID</string>
        </property>
       </column>
      </widget>
      <widget class="QWidget" name="verticalLayoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <widget class="QGraphicsView" name="graphicsView">
+        <widget class="QGraphicsView" name="graphicsView_preview">
          <property name="minimumSize">
           <size>
            <width>0</width>

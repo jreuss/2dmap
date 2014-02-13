@@ -49,3 +49,6 @@ LIBS += C:\\opencv248\\build\\lib\\libopencv_core248.dll.a \
     C:\\opencv248\\build\\lib\\libopencv_imgproc248.dll.a \
     C:\\opencv248\\build\\lib\\libopencv_photo248.dll.a
 }
+
+RESOURCES += \
+    assets.qrc

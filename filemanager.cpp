@@ -13,3 +13,9 @@ QList<QUrl> FileManager::FileDialog() const
 
     return file_dialog->getOpenFileUrls(0, title, path, selection_filter);
 }
+
+FileManager::~FileManager()
+{
+    file_dialog = NULL;
+    delete file_dialog;
+}

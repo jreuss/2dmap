@@ -14,6 +14,7 @@ class FileManager
 public:
     FileManager();
     QList<QUrl> FileDialog() const;
+    ~FileManager();
 
 private:
     QList<QUrl> file_list;
