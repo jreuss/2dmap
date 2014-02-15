@@ -6,46 +6,51 @@ ElementTemplate::ElementTemplate()
 
 }
 
-ElementTemplate::ElementTemplate(QUuid id)
+ElementTemplate::ElementTemplate(const QString& id)
 {
     mID = id;
 }
 
-QUuid ElementTemplate::getUID() const
+const QString  ElementTemplate::getID() const
 {
     return mID;
 }
 
-QString ElementTemplate::getStringID() const
-{
-    return mID.toString();
-}
-
-const QVector<cv::Point>& ElementTemplate::contour() const
+const std::vector<cv::Point>& ElementTemplate::contour() const
 {
     return mContour;
 }
 
-void ElementTemplate::setContour(const QVector<cv::Point>& contour)
+void ElementTemplate::setContour(const std::vector<cv::Point>& contour)
 {
     mContour = contour;
 }
 
-const QVector<cv::Point>& ElementTemplate::fixture() const
+const std::vector<cv::Point>& ElementTemplate::fixture() const
 {
     return mFixture;
 }
 
-void ElementTemplate::setFixture(const QVector<cv::Point>& fixture)
+void ElementTemplate::setFixture(const std::vector<cv::Point>& fixture)
 {
     mFixture = fixture;
 }
 
+const QImage ElementTemplate::image() const
+{
+    return mImg;
+}
+
+void ElementTemplate::setImage(QImage img)
+{
+    mImg = img;
+}
+
 bool ElementTemplate::addElement(Element& elem)
 {
-    if(!mElements.contains(elem.getStringID()))
+    if(!mElements.contains(elem.getID()))
     {
-        mElements.insert(elem.getStringID(),&elem);
+        mElements.insert(elem.getID(), &elem);
         return true;
     }
     return false;

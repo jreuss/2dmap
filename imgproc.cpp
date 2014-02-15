@@ -47,7 +47,7 @@ QImage ImgProc::compare_test(std::vector<std::vector<cv::Point> > &contours,
 
     for(int i=0; i<max; i++)
     {
-       cv::Scalar col = cv::Scalar(rng.uniform(0,255),
+       cv::Scalar col = cv::Scalar(rng.uniform(0, 255),
                                    rng.uniform(0, 255),
                                    rng.uniform(0, 255),
                                    255);
@@ -57,7 +57,6 @@ QImage ImgProc::compare_test(std::vector<std::vector<cv::Point> > &contours,
            double match = cv::matchShapes(contours[i], contours[j], CV_CONTOURS_MATCH_I1, 0);
            if(match < shape_thress)
            {
-
                if(colors[j] == default_color)
                {
                     colors[j] = col;
@@ -74,6 +73,58 @@ QImage ImgProc::compare_test(std::vector<std::vector<cv::Point> > &contours,
     }
 
     return toQImage(img);
+}
+
+void ImgProc::create_templates(MatchGroup group)
+{
+    cv::Mat img = cv::imread(group.path.toStdString(), cv::IMREAD_UNCHANGED);
+    ElementTemplateManager templateManger;
+
+    for(int i=0; i<group.matchList.size(); i++)
+    {
+
+        int index = group.matchList[i].front();
+        cv::Rect rect = cv::boundingRect(group.contours[index]);
+        cv::Mat mat = img(rect);
+    }
+}
+
+QList<QList<unsigned> > ImgProc::get_matches(std::vector<std::vector<cv::Point> > &contours, const float &shape_thress)
+{
+    unsigned max = contours.size();
+    std::vector<unsigned> ignored;
+    QList<QList<unsigned> > matched;
+
+    bool ignore = false;
+    for(unsigned i=0; i<max; i++)
+    {
+        foreach (unsigned x, ignored)
+        {
+            ignore = (x == i);
+            break;
+        }
+
+        if(!ignore)
+        {
+            QList<unsigned> list;
+            list.append(i);
+
+            for(unsigned j=i+1; j<max; j++)
+            {
+                double match = cv::matchShapes(contours[i],
+                                               contours[j],
+                                               CV_CONTOURS_MATCH_I1, 0);
+                if(match < shape_thress)
+                {
+                    list.append(j);
+                    ignored.push_back(j);
+                }
+            }
+            matched.append(list);
+        }
+    }
+
+    return matched;
 }
 
 std::vector<std::vector<cv::Point> > ImgProc::findContours(const QString &path) const

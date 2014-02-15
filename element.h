@@ -14,15 +14,14 @@ public:
 
     Element();
 
-    Element(const QUuid &id, ElementTemplate* parent);
+    Element(const QString &id, ElementTemplate* parent);
 
     ~Element();
 
     ElementTemplate* parent() const;
     void setParent(ElementTemplate* parent);
 
-    QUuid getUID() const;
-    QString getStringID() const;
+    QString getID() const;
 
     QString name() const;
     void setName(QString name);
@@ -38,7 +37,7 @@ public:
 
 private:
     ElementTemplate* mParent;
-    QUuid mID;
+    QString mID;
     QString mName;
     float mAngle;
     cv::Point mScale;

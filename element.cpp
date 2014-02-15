@@ -3,18 +3,13 @@
 
 Element::Element() {}
 
-Element::Element(const QUuid& id, ElementTemplate* parent)
+Element::Element(const QString& id, ElementTemplate* parent)
 {
     mID = id;
     mParent = parent;
 }
 
-QString Element::getStringID() const
-{
-    return mID.toString();
-}
-
-QUuid Element::getUID() const
+QString Element::getID() const
 {
     return mID;
 }

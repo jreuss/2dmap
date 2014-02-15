@@ -2,32 +2,45 @@
 #include <QVariant>
 
 
-QHash<QString, ElementTemplate> ElementTemplateManager::templates;
+QHash<QString, ElementTemplate> ElementTemplateManager::mTemplates;
 
 ElementTemplateManager::ElementTemplateManager()
 {
 
 }
 
+unsigned ElementTemplateManager::getSize() const
+{
+    return mTemplates.count();
+}
+
 void ElementTemplateManager::addTemplate(const QString &key, const ElementTemplate &el)
 {
-    templates.insert(key, el);
+    mTemplates.insert(key, el);
 }
 
 void ElementTemplateManager::addTemplate(const QVariant &key, const ElementTemplate &el)
 {
 
-    templates.insert(key.toString(), el);
+    mTemplates.insert(key.toString(), el);
 }
 
 ElementTemplate ElementTemplateManager::getTemplate(const QString &key) const
 {
-    return templates.value(key);
+    return mTemplates.value(key);
 }
 
 ElementTemplate ElementTemplateManager::getTemplate(const QVariant&key) const
 {
-    return templates.value(key.toString());
+    return mTemplates.value(key.toString());
+}
+
+QHashIterator<QString, ElementTemplate> ElementTemplateManager::getIterator() const
+{
+
+    QHashIterator<QString, ElementTemplate> iter(mTemplates);
+
+    return  iter;
 }
 
 

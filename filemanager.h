@@ -18,7 +18,7 @@ public:
 
 private:
     QList<QUrl> file_list;
-    QFileDialog* file_dialog;
+    QFileDialog file_dialog;
 };
 
 #endif // FILEMANAGER_H

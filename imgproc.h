@@ -7,6 +7,12 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <QImage>
 #include <QDebug>
+#include <QPair>
+#include <QList>
+
+#include "matchgroup.h"
+#include "elementtemplate.h"
+#include "elementtemplatemanager.h"
 
 class ImgProc
 {
@@ -18,6 +24,12 @@ public:
 
     QImage compare_test(std::vector<std::vector<cv::Point> > &contours,
                         const QString &path, const float& shape_thress);
+
+    void create_templates (MatchGroup group);
+
+    QList<QList<unsigned> > get_matches(
+            std::vector<std::vector<cv::Point> > &contours,
+            const float& shape_thress);
 private:
     void cvtAlphaToBinary(const cv::Mat &src, cv::Mat &out) const;
 };

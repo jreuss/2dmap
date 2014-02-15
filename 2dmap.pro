@@ -27,7 +27,8 @@ HEADERS  += mainwindow.h \
     elementtemplate.h \
     elementtemplatemanager.h \
     filemanager.h \
-    imgproc.h
+    imgproc.h \
+    matchgroup.h
 
 FORMS    += mainwindow.ui \
     importdialog.ui

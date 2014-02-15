@@ -5,6 +5,7 @@
 #include <QVector>
 #include <QString>
 #include <QUuid>
+#include <QImage>
 #include <QHash>
 
 class Element;
@@ -15,18 +16,20 @@ class ElementTemplate
 public:
     ElementTemplate();
 
-    ElementTemplate(QUuid id);
+    ElementTemplate(const QString& id);
 
     ~ElementTemplate();
 
-    QUuid getUID() const;
-    QString getStringID() const;
+    const QString getID() const;
 
-    const QVector<cv::Point>& contour() const;
-    void setContour(const QVector<cv::Point>& contour);
+    const std::vector<cv::Point>& contour() const;
+    void setContour(const std::vector<cv::Point>& contour);
 
-    const QVector<cv::Point>& fixture() const;
-    void setFixture(const QVector<cv::Point>& fixture);
+    const std::vector<cv::Point>& fixture() const;
+    void setFixture(const std::vector<cv::Point>& fixture);
+
+    const QImage image() const;
+    void setImage(QImage img);
 
     bool addElement(Element &elem);
 
@@ -43,9 +46,10 @@ private:
     QHash<QString, Element*> mElements;
     QString mName;
     QString mImgPath;
-    QUuid mID;
-    QVector<cv::Point> mContour;
-    QVector<cv::Point> mFixture;
+    QString mID;
+    std::vector<cv::Point> mContour;
+    std::vector<cv::Point> mFixture;
+    QImage mImg;
 };
 
 #endif // ELEMENTTEMPLATE_H

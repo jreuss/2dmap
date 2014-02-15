@@ -16,8 +16,12 @@
 #include <QGraphicsPixmapItem>
 #include <QBrush>
 #include <QDir>
+#include <QPropertyAnimation>
 
 #include "imgproc.h"
+#include "elementtemplate.h"
+#include "elementtemplatemanager.h"
+#include "matchgroup.h"
 
 namespace Ui {
 class ImportDialog;
@@ -33,28 +37,29 @@ public:
 
     ~ImportDialog();
 public slots:
-   void onItemSelectionChanged(QTreeWidgetItem*,int);
-
+   void onItemSelectionChanged(QModelIndex);
+   void applySplitOption();
 
 private:
-    void fillTree(QList<QUrl> urls);
+    void parseUrls(QList<QUrl> urls);
+    void updateTree();
     void createConnections();
+    void createTreeItem(const QString& path, const QString& name,
+                        const QString& type, const QString& id);
 
-    struct TmpObj {
-        QString ID, name, path;
-        std::vector<std::vector<cv::Point> > contours;
-        std::vector<cv::Point> fixture;
-    };
+    ElementTemplateManager mTemplateManager;
 
-    TmpObj createTmpObj(QUrl url);
+    QHash<QString, MatchGroup> mGroupList;
+    QList<QString> mTreeList;
 
     QGraphicsScene mScene;
     QImage *mImg;
     QGraphicsPixmapItem *mPixmap;
     Ui::ImportDialog *ui;
-    QHash<QString, TmpObj> mTmpList;
     ImgProc mImgProc;
-    QBrush checkerbrush;
+    QBrush mCheckerbrush;
+    QModelIndex mCurrentIndex;
+    QTreeWidgetItem *mCurrentItm;
 };
 
 #endif // IMPORTDIALOG_H
