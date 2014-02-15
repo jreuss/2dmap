@@ -44,9 +44,7 @@ void ImportDialog::onItemSelectionChanged(QModelIndex index)
         QString id = mCurrentItm->data(2,0).toString();
         ui->stack_pages->setCurrentIndex(type);
 
-
-         mImg = type == 0 ? new QImage(mTemplateManager.getTemplate(id).imgPath())
-                          : new QImage(mGroupList.value(id).path);
+        mImg = new QImage(mTreeItemList.value(id).img);
 
         mPixmap = new QGraphicsPixmapItem(QPixmap::fromImage(*mImg));
 
@@ -73,10 +71,24 @@ void ImportDialog::applySplitOption()
 {
     if(ui->radio_split->isChecked())
     {
+        QString id = ui->tree_images->currentItem()->data(2,0).toString();
+        TreeItem itm = mTreeItemList.value(id);
 
+        itm.matchList = mImgProc.get_matches(itm.contours, 0.1);
+
+        QList<TreeItem> list = mImgProc.split(itm, ui->tree_images->currentItem());
+
+        foreach (TreeItem t, list) {
+            mTreeItemList.insert(QUuid::createUuid().toString(), t);
+        }
     }
 
     updateTree();
+
+    if(ui->tree_images->currentItem()->childCount() > 0)
+    {
+        ui->tree_images->currentItem()->setExpanded(true);
+    }
 }
 
 void ImportDialog::parseUrls(QList<QUrl> urls)
@@ -85,30 +97,15 @@ void ImportDialog::parseUrls(QList<QUrl> urls)
 
     foreach(QUrl url, urls)
     {
-        QString path = QDir::toNativeSeparators(url.toLocalFile());
-        QString id = QUuid::createUuid().toString();
-        vector<vector<cv::Point> > contour =
-                mImgProc.findContours(path);
+        TreeItem treeItem;
+        treeItem.path = QDir::toNativeSeparators(url.toLocalFile());
+        treeItem.img = QImage(treeItem.path);
+        treeItem.contours = mImgProc.findContours(treeItem.path);
+        treeItem.name = url.fileName();
+        treeItem.itemType = treeItem.contours.size() == 1 ?
+                    "Single" : "Group";
 
-        if(contour.size() == 1)
-        {
-            ElementTemplate tmp(id);
-            tmp.setImgPath(path);
-            tmp.setContour(contour.front());
-            tmp.setName(url.fileName());
-
-            mTemplateManager.addTemplate(id, tmp);
-        }
-        else
-        {
-            MatchGroup group;
-            group.contours = contour;
-            group.matchList = mImgProc.get_matches(group.contours, 0.01);
-            group.path = path;
-            group.name = url.fileName();
-
-            mGroupList.insert(id, group);
-        }
+        mTreeItemList.insert(QUuid::createUuid().toString(), treeItem);
     }
 
     updateTree();
@@ -116,47 +113,41 @@ void ImportDialog::parseUrls(QList<QUrl> urls)
 
 void ImportDialog::updateTree()
 {
+    QHashIterator<QString, TreeItem> iter(mTreeItemList);
 
-    QHashIterator<QString, ElementTemplate> templateIter = mTemplateManager.getIterator();
-
-    while(templateIter.hasNext())
+    while(iter.hasNext())
     {
-        templateIter.next();
+        iter.next();
 
-        if(!mTreeList.contains(templateIter.key()))
+        if(!mTreeList.contains(iter.key()))
         {
-            createTreeItem(templateIter.value().imgPath(), templateIter.value().name(),
-                           "Single", templateIter.key());
-        }
-    }
-
-    QHashIterator<QString, MatchGroup> groupIter(mGroupList);
-
-    while(groupIter.hasNext())
-    {
-        groupIter.next();
-
-        if(!mTreeList.contains(groupIter.key()))
-        {
-            createTreeItem(groupIter.value().path, groupIter.value().name,
-                           "Group", groupIter.key());
+            createTreeItem(iter.value().name, iter.value().itemType,
+                           iter.key(), iter.value().img, iter.value().parent);
         }
     }
 }
 
-void ImportDialog::createTreeItem(const QString &path, const QString &name,
-                                  const QString &type, const QString &id)
+void ImportDialog::createTreeItem(const QString &name, const QString &type,
+                                  const QString &id, const QImage& img, QTreeWidgetItem* parent)
 {
     QTreeWidgetItem* tree_itm = new QTreeWidgetItem();
 
-    QIcon ico(path);
+    QIcon ico(QPixmap::fromImage(img));
     tree_itm->setIcon(0, ico);
     tree_itm->setText(0, name);
     tree_itm->setText(1, type);
     tree_itm->setText(2, id);
 
     mTreeList.append(id);
-    ui->tree_images->addTopLevelItem(tree_itm);
+
+    if(parent == NULL)
+    {
+        ui->tree_images->addTopLevelItem(tree_itm);
+    }
+    else
+    {
+       parent->addChild(tree_itm);
+    }
 }
 
 void ImportDialog::createConnections()

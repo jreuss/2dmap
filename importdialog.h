@@ -21,7 +21,7 @@
 #include "imgproc.h"
 #include "elementtemplate.h"
 #include "elementtemplatemanager.h"
-#include "matchgroup.h"
+#include "treeitem.h"
 
 namespace Ui {
 class ImportDialog;
@@ -44,12 +44,11 @@ private:
     void parseUrls(QList<QUrl> urls);
     void updateTree();
     void createConnections();
-    void createTreeItem(const QString& path, const QString& name,
-                        const QString& type, const QString& id);
+    void createTreeItem(const QString& name, const QString &type,
+                        const QString& id, const QImage& img, QTreeWidgetItem* parent);
 
     ElementTemplateManager mTemplateManager;
-
-    QHash<QString, MatchGroup> mGroupList;
+    QHash<QString, TreeItem> mTreeItemList;
     QList<QString> mTreeList;
 
     QGraphicsScene mScene;

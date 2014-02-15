@@ -75,21 +75,42 @@ QImage ImgProc::compare_test(std::vector<std::vector<cv::Point> > &contours,
     return toQImage(img);
 }
 
-void ImgProc::create_templates(MatchGroup group)
+QList<TreeItem> ImgProc::split(const TreeItem &group, QTreeWidgetItem *parent)
 {
+    QList<TreeItem> list;
     cv::Mat img = cv::imread(group.path.toStdString(), cv::IMREAD_UNCHANGED);
     ElementTemplateManager templateManger;
 
+    qDebug() << group.matchList.size();
+
     for(int i=0; i<group.matchList.size(); i++)
     {
-
         int index = group.matchList[i].front();
-        cv::Rect rect = cv::boundingRect(group.contours[index]);
+
+        cv::Rect rect = cv::boundingRect(group.contours[index]); 
         cv::Mat mat = img(rect);
+
+        QImage qImg = toQImage(mat);
+
+        TreeItem treeItem;
+        treeItem.parent = parent;
+        treeItem.img = QImage(qImg);
+
+        std::vector<std::vector<cv::Point> > contour;
+        contour.push_back(group.contours[index]);
+
+        treeItem.contours = contour;
+        treeItem.name = "child item";
+        treeItem.itemType = "Single";
+
+        list.append(treeItem);
     }
+
+    return list;
 }
 
-QList<QList<unsigned> > ImgProc::get_matches(std::vector<std::vector<cv::Point> > &contours, const float &shape_thress)
+QList<QList<unsigned> > ImgProc::get_matches(std::vector<std::vector<cv::Point> > &contours,
+                                             const float &shape_thress)
 {
     unsigned max = contours.size();
     std::vector<unsigned> ignored;
